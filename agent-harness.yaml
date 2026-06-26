@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-coding-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-coding-agent
+  template:
+    metadata:
+      labels:
+        app: test-coding-agent
+    spec:
+      volumes:
+      - name: shared-workspace
+        emptyDir: {}
+
+      containers:
+      - name: coding-agent
+        image: ghcr.io/erbou/renku-frontend-buildpacks/coding-agent-vscodium:0.7.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: shared-workspace
+          mountPath: /home/renku/work
+      - name: agent-harness-sandbox
+        image: ghcr.io/erbou/renku-frontend-buildpacks/coding-agent-vscodium:0.7.1
+        imagePullPolicy: Always
+        command:
+        - /cnb/process/harness-sbx
+        volumeMounts:
+        - name: shared-workspace
+          mountPath: /home/renku/work
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-coding-agent
+spec:
+  selector:
+    app: test-coding-agent
+  ports:
+  - port: 8000
+    targetPort: 8000
