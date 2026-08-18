@@ -1,0 +1,32 @@
+  extraContainers:
+    - name: sbx-sidecar
+      image: ghcr.io/erbou-sdsc/renku-frontend-buildpacks/coding-agent-vscodium:0.7.2
+      command:
+        - /cnb/process/harness-sbx
+      env:
+      - name: RENKU_MOUNT_DIR
+        value: /home/renku/work
+      - name: RENKU_WORKING_DIR
+        value: /home/renku/work
+      - name: RENKU_PROJECT_ID
+        value: 01KZRP9X2S429DXW61007G5BQF
+      - name: RENKU_PROJECT_PATH
+        value: eric.bouillet/coding-agent
+      - name: RENKU_LAUNCHER_ID
+        value: 01KZRPBH593MJ20MNA2TKJVD2G
+      - name: CNB_APP_DIR
+        value: /home/renku/work
+      imagePullPolicy: Always
+      resources:
+        limits:
+          memory: 1Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
+      securityContext:
+        runAsGroup: 1000
+        runAsUser: 1000
+      volumeMounts:
+        - mountPath: /home/renku/work
+          name: amalthea-volume
+      workingDir: /home/renku/work

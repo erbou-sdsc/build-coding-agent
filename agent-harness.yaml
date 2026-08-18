@@ -18,7 +18,7 @@ spec:
 
       containers:
       - name: coding-agent
-        image: ghcr.io/erbou/renku-frontend-buildpacks/coding-agent-vscodium:0.7.1
+        image: ghcr.io/erbou-sdsc/renku-frontend-buildpacks/coding-agent-vscodium:0.7.2
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
@@ -26,7 +26,7 @@ spec:
         - name: shared-workspace
           mountPath: /home/renku/work
       - name: agent-harness-sandbox
-        image: ghcr.io/erbou/renku-frontend-buildpacks/coding-agent-vscodium:0.7.1
+        image: ghcr.io/erbou-sdsc/renku-frontend-buildpacks/coding-agent-vscodium:0.7.2
         imagePullPolicy: Always
         command:
         - /cnb/process/harness-sbx
