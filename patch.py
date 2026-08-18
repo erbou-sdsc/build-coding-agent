@@ -6,8 +6,9 @@ import argparse
 
 if __name__ == '__main__':
     """
-    Patch renku session with a coding agent harness sandboxed in a sidecar container.
-    Values ... are copied from the session container.
+    Patch renku session with a coding agent harness sandboxed
+    in a sidecar container as shown below.
+    Values shown as `...` are copied from the session container.
 
     extraContainers:
       - name: sbx-sidecar
@@ -16,38 +17,38 @@ if __name__ == '__main__':
           - /cnb/process/harness-sbx
         env:
         - name: RENKU_MOUNT_DIR
-          value: ...
+          value: `...`
         - name: RENKU_WORKING_DIR
-          value: ...
+          value: `...`
         - name: RENKU_PROJECT_ID
-          value: ...
+          value: `...`
         - name: RENKU_PROJECT_PATH
-          value: ...
+          value: `...`
         - name: RENKU_LAUNCHER_ID
-          value: ...
+          value: `...`
         - name: CNB_APP_DIR
-          value: ...
+          value: `...`
         imagePullPolicy: Always
         resources:
           limits:
-            memory: ...
+            memory: `...`
           requests:
-            cpu: ...
-            memory: ...
+            cpu: `...`
+            memory: `...`
         securityContext:
-          runAsGroup: ...
-          runAsUser: ...
+          runAsGroup: `...`
+          runAsUser: `...`
         volumeMounts:
-          - mountPath: ...
+          - mountPath: `...`
             name: amalthea-volume
-        workingDir: ...
+        workingDir: `...`
     """
     parser = argparse.ArgumentParser(
             prog='patch',
-            description='patch a renku session to add a sandboxing sidecar',
+            description='patch a renku session with an agent sandboxing sidecar',
     )
 
-    parser.add_argument('--ams', '-a', help="Amalthea configuration ID")
+    parser.add_argument('--ams', '-a', help="Configuration Id")
     parser.add_argument('--namespace', '-n', help="Namespace")
     parser.add_argument('--apply', '-f', action='store_true', help="Apply the patch")
 
@@ -85,6 +86,21 @@ if __name__ == '__main__':
                 ],
                 "workingDir": obj["spec"]["session"]["workingDir"],
         }
-        print(json.dumps(obj, indent=4))
+        config = json.dumps(obj, indent=4)
+        print(config)
+        if args.apply:
+            result = subprocess.run(
+                ["tsh", "kubectl", "-n", args.namespace, "apply", "-f", "-"],
+                input=config,
+                text=True,
+                capture_output=True,
+            )
+            if not result.returncode:
+                print("=== Config was applied ===")
+                print(result.stdout)
+            else:
+                print("=== Error while applying config ===")
+                print(result.stderr)
+
     else:
         print(output.stderr)

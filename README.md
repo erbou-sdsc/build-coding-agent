@@ -24,49 +24,67 @@ The overall configuration is intentionally minimal. In particular, the default t
 
 ### Login to teleport
 
-> tsh login --auth=github --proxy=teleport.dev.renku.ch:443 teleport.dev.renku.ch
-> tsh kube login teleport.dev.renku.ch
+```bash
+tsh login --auth=github --proxy=teleport.dev.renku.ch:443 teleport.dev.renku.ch
+tsh kube login teleport.dev.renku.ch
+```
 
 ### Patch an existing renku instance
 
 #### Start a renku session
 
-Start the instance, then note the namespace and the session id from the URL.
+Start the instance, and then note the namespace and session ID from the URL, as shown below.
 
-> https://**namespace**.dev.renku.ch/p/group/coding-agent/sessions/show/**session-id**
+```bash
+https://<namespace>.dev.renku.ch/p/<slug>/coding-agent/sessions/show/<session-id>
+```
 
 #### Patch the instance
 
-> ./patch.py --namespace **namespace** --ams **session-id**
+```bash
+./patch.py --namespace <namespace> --ams <session-id> --apply
+```
+
+Pause the instance and resume it to ensure that the changes take effect.
 
 ### Deploy and test a standalone yaml for testing purposes
 
-#### Create a k8s namespace
+#### Create your k8s namespace
 
-> tsh kubcetl create namespace <mynamespace>
+```bash
+tsh kubcetl create namespace <namespace>
+```
+Use this namespace in all the commands shown below.
 
 #### Deploy the coding agent test case on k8s
 
-E.g. apply the sample _agent-harness.yaml_.
+E.g. apply the sample _[test-agent-harness.yaml](./test-agent-harness.yaml)_.
 
-> tsh kubectl -n **namespace** apply -f agent-harness.yaml
-> tsh kubectl -n **namespace** get pods
-> tsh kubectl -n **namespace** port-forward svc/test-coding-agent 8081:8000
+```bash
+tsh kubectl -n <namespace> apply -f agent-harness.yaml
+tsh kubectl -n <namespace> get pods
+tsh kubectl -n <namespace> port-forward svc/test-coding-agent 8081:8000
+```
 
 (1) get pods must show 2/2 pods ready
 
 #### Exec in main container
 
-> tsh kubectl -n **namespace** exec -it deploy/test-coding-agent -c coding-agent -- bash
+```bash
+tsh kubectl -n <namespace> exec -it deploy/test-coding-agent -c coding-agent -- bash
+```
 
 #### Exec in sidecar
 
-> tsh kubectl -n **namespace** exec -it deploy/test-coding-agent -c agent-harness-sandbox-- bash
+```bash
+tsh kubectl -n <namespace> exec -it deploy/test-coding-agent -c agent-harness-sandbox -- bash
+```
 
 #### Open in browser
 
+```bash
 open http://localhost:8081
-
+```
 #### In browser frontend UI
 
 - Open a terminal
@@ -78,7 +96,8 @@ WIP: resumable sessions to where it left off tested on _pi-sbx_, unverified on _
 
 #### Delete the kubernetes pod
 
-> tsh kubectl -n **namespace** delete deployment test-coding-agent
-
+```bash
+tsh kubectl -n <namespace> delete deployment test-coding-agent
+```
 ## References:
 - [notion](https://www.notion.so/renku/Coding-Agents-in-Renku-Build-Team-3570df2efafc80ef9024c6736b4682bc?source=copy_link)
