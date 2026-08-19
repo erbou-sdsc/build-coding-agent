@@ -48,8 +48,8 @@ if __name__ == '__main__':
             description='patch a renku session with an agent sandboxing sidecar',
     )
 
-    parser.add_argument('--ams', '-a', help="Configuration Id")
-    parser.add_argument('--namespace', '-n', help="Namespace")
+    parser.add_argument('--ams', '-a', type=str, required=True, help="Configuration Id")
+    parser.add_argument('--namespace', '-n', type=str, required=True, help="Namespace")
     parser.add_argument('--apply', '-f', action='store_true', help="Apply the patch")
 
     args = parser.parse_args()
